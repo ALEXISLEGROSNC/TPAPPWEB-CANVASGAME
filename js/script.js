@@ -1,20 +1,24 @@
 import Game from "./Game.js";
+import Config from "./Config.js";
 
-// Bonne pratique : avoir une fonction appelée une fois
-// que la page est prête, que le DOM est chargé, etc.
+
 window.onload = init;
 
 async function init() {
-   // On recupère le canvas
-   let canvas = document.querySelector("#myCanvas");
+    
+    if (document.querySelector("#myCanvas")) existingCanvas.remove();
 
-   // On cree une instance du jeu
+    let canvas = document.createElement("canvas");
+    canvas.width = Config.Canvas.size.x;    //config
+    canvas.height = Config.Canvas.size.y;   //config
+    canvas.id = "myCanvas";
+
+    document.body.appendChild(canvas);
+    
     let game = new Game(canvas);
-    // ici on utilise await car la méthode init est asynchrone
-    // typiquement dans init on charge des images, des sons, etc.
+    
     await game.init();
 
-    // on peut démarrer le jeu
     game.start();
 }
 

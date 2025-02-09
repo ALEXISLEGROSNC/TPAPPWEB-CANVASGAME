@@ -1,47 +1,90 @@
 import ObjectGraphique from "./ObjectGraphique.js";
-import { drawCircleImmediat } from "./utils.js";   
+import { drawCircleImmediat } from "./utils.js";
 
 export default class Player extends ObjectGraphique {
     constructor(x, y) {
-        super(x, y, 100, 100);
+        super(x, y, 50, 50);
         this.vitesseX = 0;
         this.vitesseY = 0;
-        this.couleur = "pink";
         this.angle = 0;
+        this.center = this.#getCenter();
+    }
+
+    #getCenter() {
+        var res = [this.x + this.w / 2, this.y + this.h / 2];
+        return res;
+    }
+    
+    #drawShuttleTriangleHelper(ctx, x1, x2, x3, y1, y2, y3) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineTo(x3, y3);
+        ctx.closePath();
+        ctx.fill();
     }
 
     draw(ctx) {
-        // Ici on dessine un monstre
+
+
+        var center = this.#getCenter();
+    
+        var rotationOffsetX = -25;
+        var rotationOffsetY = -25;
+        var rotationPointX = center[0] + rotationOffsetX;
+        var rotationPointY = center[1] + rotationOffsetY;
+    
         ctx.save();
-
-        // on déplace le systeme de coordonnées pour placer
-        // le monstre en x, y.Tous les ordres de dessin
-        // dans cette fonction seront par rapport à ce repère
-        // translaté
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.angle);
-        // on recentre le monstre. Par défaut le centre de rotation est dans le coin en haut à gauche
-        // du rectangle, on décale de la demi largeur et de la demi hauteur pour 
-        // que le centre de rotation soit au centre du rectangle.
-        // Les coordonnées x, y du monstre sont donc au centre du rectangle....
-        ctx.translate(-this.w / 2, -this.h / 2);
-        //this.ctx.scale(0.5, 0.5);
-
-        // tete du monstre
-        ctx.fillStyle = "pink";
-        ctx.fillRect(0, 0, this.w, this.h);
-        // yeux
-        drawCircleImmediat(ctx, 20, 20, 10, "red");
-        drawCircleImmediat(ctx, 60, 20, 10, "red");
-
-        // Les bras
-        //this.drawBrasGauche();
-
-        // restore
+    
+        //dessiner en décalé
+        ctx.translate(rotationPointX, rotationPointY);
+        // Rotation en fonction du vecteur vitesse
+        if (this.vitesseY != 0 && this.vitesseX != 0) {
+            console.log("yay");
+            var angle = Math.atan2(this.vitesseY, this.vitesseX) + Math.PI / 2; // Ajouter 90 degrés en radians
+            ctx.rotate(angle);
+        }
+        //dessiner en décalé
+        ctx.translate(-rotationPointX, -rotationPointY);
+    
+        // Corps
+        drawCircleImmediat(ctx, this.x, this.y - 13, 20, "darkred"); // tour
+        drawCircleImmediat(ctx, this.x, this.y - 13, 18, "red");
+        // Corps
+        ctx.fillStyle = "lightgray";
+        ctx.fillRect(this.x - (this.w / 2) + 5, this.y - 13, 40, 40); // tour
+        ctx.fillStyle = "white";
+        ctx.fillRect(this.x - (this.w / 2) + 7, this.y - 13, 36, 38);
+        // Hublot
+        drawCircleImmediat(ctx, this.x, this.y + 2, 13, "red");
+        drawCircleImmediat(ctx, this.x, this.y + 2, 10, "cyan");
+        // Reflet
+        drawCircleImmediat(ctx, this.x, this.y - 1, 2, "lightcyan");
+        drawCircleImmediat(ctx, this.x + 2, this.y - 1, 2, "lightcyan");
+        drawCircleImmediat(ctx, this.x + 4, this.y, 2, "lightcyan");
+    
+        // Ailerons
+        ctx.fillStyle = "darkred";
+        ctx.fillRect(this.x - 20, this.y + 28, 40, 5); // base basse
+    
+        ctx.fillStyle = "red";
+        ctx.fillRect(this.x - 3, this.y + 23, 6, 15);
+    
+        var x1 = this.x - 15, y1 = this.y + 23;
+        var x2 = this.x - 15, y2 = this.y + 38;
+        var x3 = this.x - 25, y3 = this.y + 38;
+        this.#drawShuttleTriangleHelper(ctx, x1, x2, x3, y1, y2, y3); // gauche
+        x1 = this.x + 15, y1 = this.y + 23;
+        x2 = this.x + 15, y2 = this.y + 38;
+        x3 = this.x + 25, y3 = this.y + 38;
+        this.#drawShuttleTriangleHelper(ctx, x1, x2, x3, y1, y2, y3); // droit
+    
+        ctx.fillStyle = "darkred";
+        ctx.fillRect(this.x - 20, this.y + 23, 40, 5); // base haute
+    
         ctx.restore();
+        
 
-        // super.draw() dessine une croix à la position x, y
-        // pour debug
         super.draw(ctx);
     }
 

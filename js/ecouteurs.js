@@ -32,10 +32,17 @@ function initListeners(inputStates, canvas) {
     }
 
     window.onmousemove = (event) => {
-        // get proper x and y for the mouse in the canvas
         inputStates.mouseX = event.clientX - canvas.getBoundingClientRect().left;
         inputStates.mouseY = event.clientY - canvas.getBoundingClientRect().top;
     }
+
+    canvas.onmousedown = (event) => {
+        inputStates.mouseDown=true;
+    }
+    window.onmouseup = (event) => {
+        inputStates.mouseDown=false;
+    }
+
 }
 
 export { initListeners };
