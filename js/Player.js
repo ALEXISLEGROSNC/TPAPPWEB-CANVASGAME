@@ -39,8 +39,11 @@ export default class Player extends ObjectGraphique {
         //dessiner en décalé
         ctx.translate(rotationPointX, rotationPointY);
         // Rotation en fonction du vecteur vitesse
+        // if (this.vitesseY != 0 && this.vitesseX != 0) {
+        //     var angle = Math.atan2(this.vitesseY, this.vitesseX) + Math.PI / 2; // Ajouter 90 degrés en radians
+        //     ctx.rotate(angle);
+        // }
         if (this.vitesseY != 0 && this.vitesseX != 0) {
-            console.log("yay");
             var angle = Math.atan2(this.vitesseY, this.vitesseX) + Math.PI / 2; // Ajouter 90 degrés en radians
             ctx.rotate(angle);
         }

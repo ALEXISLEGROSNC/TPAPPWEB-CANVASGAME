@@ -11,7 +11,7 @@ export default class ObjetSouris extends ObjectGraphique {
         this.clickPosition = null;
         if(this.inverseSensivity==0||this.inverseSensivity==null) this.inverseSensivity=1;
     }
-    getDragValue(){ // emulating an event : get the value every update , do nothing when it's null
+    getDragValue(){
         var temp = this.#dragValue;
         this.#dragValue=null
         return temp;
@@ -57,9 +57,9 @@ export default class ObjetSouris extends ObjectGraphique {
             ctx.moveTo(this.clickPosition[0],this.clickPosition[1]);
             ctx.lineTo(this.x, this.y);
             ctx.stroke();
+            this.#dragValue=this.#calculateDragValue();
         } else {    
             if(this.clickPosition!=null){
-                this.#dragValue=this.#calculateDragValue();
             }
             this.clickPosition=null;    
         }

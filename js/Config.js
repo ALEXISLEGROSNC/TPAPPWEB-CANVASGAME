@@ -6,7 +6,7 @@ export default class Config {
         }
     }
     static Cursor = class {
-        static color = "black";
-        static pathColor = "orange";
+        static color = "gray";
+        static pathColor = "white";
     };
 }
