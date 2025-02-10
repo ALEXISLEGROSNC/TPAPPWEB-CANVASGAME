@@ -15,8 +15,8 @@ export default class Game {
     StarList = [];
     score = 0;
 
+    panelsContainer=null;
     StartPanel=null;
-    GameOver=null;
 
     constructor(canvas) {
         this.canvas = canvas;
@@ -35,32 +35,85 @@ export default class Game {
         this.lastSpawnTime = 0;
         this.lastSpawnTimeStars = 0;
         
-        let panelsContainer = document.getElementById("panelsContainer");
-        if (!panelsContainer) {
+        this.panelsContainer = document.getElementById("panelsContainer");
+        if (!this.panelsContainer) {
             console.error("Erreur : L'élément #container est introuvable !");
             return;
         }
 
+    }
+    #displayStartPanel(score){
+        
+        this.panelsContainer.style.display="flex";
+
         this.StartPanel = document.getElementById("StartPanel");
-        if (this.StartPanel) {
-            this.StartPanel.remove();
+        if (this.StartPanel) { 
+            this.StartPanel.remove(); 
         }
-        this.StartPanel= document.createElement("div");
-        this.StartPanel.id="StartPanel";
+        
+        this.StartPanel = document.createElement("div");
+        this.StartPanel.id = "StartPanel";
         this.StartPanel.style.backgroundColor = "rgba(20,20,20,0.7)";
         this.StartPanel.style.borderRadius = "20px";
         this.StartPanel.style.border = "3px solid gray";
         this.StartPanel.style.color = "white";
-        this.StartPanel.innerText="aaaa";
-        panelsContainer.appendChild(this.StartPanel);
+        this.StartPanel.style.display = "flex";
+        this.StartPanel.style.flexFlow = "column nowrap";
+        
+        this.StartPanel.style.justifyContent = "center";
+        this.StartPanel.style.alignItems = "center";
+        this.StartPanel.style.padding="1em";
+        //milieu
+        this.StartPanel.style.position = "absolute";
+        this.StartPanel.style.top = "50%";
+        this.StartPanel.style.left = "50%";
+        this.StartPanel.style.transform = "translate(-50%, -50%)"; // Centrer au milieu de l'écran
+        
+        //contenu
+        if(!score){
+            var text = document.createElement("p");
+            text.innerText="Cliquez et maintenez pour vous déplacer !";
+            text.style.textJustify="center";
+            
+            var controlsGif = document.createElement("img");
+            controlsGif.src="https://imgvisuals.com/cdn/shop/products/animated-drag-linear-icon-787368.gif?v=1697532665";
+            controlsGif.style.height="4em";
+            controlsGif.style.borderRadius="1em";
+            controlsGif.style.marginBottom="1em";
+    
+            
+            var button = document.createElement("button");
+            button.innerText="Jouer"
+    
+            this.StartPanel.appendChild(text);
+            this.StartPanel.appendChild(controlsGif);
+            this.StartPanel.appendChild(button);
 
+        } else {
+            
+            var text = document.createElement("p");
+            text.innerText="Votre score : "+score;
+            text.style.textJustify="center";
 
+            var button = document.createElement("button");
+            button.innerText="Rejouer"
 
+            this.StartPanel.appendChild(text);
+            this.StartPanel.appendChild(button);
+        }
+        this.panelsContainer.appendChild(this.StartPanel);
+        
+        button.onclick= () => {
+            this.stop();
+            this.running = true;
+            this.start()
+            this.panelsContainer.style.display="none";
+        };
     }
     getRandomValue(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    async init(canvas) {
+    async init(score) {
         this.ctx = this.canvas.getContext("2d");
         this.score=0;
         this.player = new Player(Config.Canvas.size.x/2, Config.Canvas.size.y/2);
@@ -79,6 +132,9 @@ export default class Game {
 
         // On initialise les écouteurs de touches, souris, etc.
         initListeners(this.inputStates, this.canvas);
+
+        this.stop();
+        this.#displayStartPanel(score);
 
         console.log("Game initialisé");
     }
@@ -101,11 +157,7 @@ export default class Game {
     
         ctx.restore();
     }
-    
 
-    drawRandomStars() {
-        dessiner 
-    }
 
 
     SpawnNewSpaceJunk() {
@@ -153,7 +205,6 @@ export default class Game {
 
     start() {
         console.log("Game démarré");
-        this.running = true;
         this.timer = 0;
         this.lastSpawnTime = performance.now();
         this.lastSpawnTimeStars = performance.now();
@@ -165,7 +216,7 @@ export default class Game {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
             this.running = false;
-            console.log(`Game stoppé après ${this.timer / 1000} secondes`);
+            console.log(`Game stoppé après ${this.timer} secondes`);
         }
     }
     
@@ -206,8 +257,10 @@ export default class Game {
     
 
     update() {
-        
-
+        console.log(this.running);
+        if(!this.running){
+            return;
+        }
         let currentTime = performance.now();  // Temps actuel en millisecondes
         let deltaT = (currentTime - (this.lastUpdateTime || currentTime)) / 1000; // Converti en secondes
     
@@ -226,7 +279,7 @@ export default class Game {
         if (currentTime - this.lastSpawnTime >= this.spawnInterval) {
             let randomCount = this.getRandomValue(1, 3);
             for (let i = 0; i < randomCount; i++) {
-                // this.SpawnNewSpaceJunk(); // todo reenable
+                this.SpawnNewSpaceJunk(); // todo reenable
             }
             this.lastSpawnTime = currentTime;
         }
@@ -262,8 +315,8 @@ export default class Game {
         //controle souris
         var dragValue = this.objetSouris.getDragValue();
         if(dragValue!=null){
-            this.player.vitesseX+=dragValue[0]*30;
-            this.player.vitesseY+=dragValue[1]*30;
+            this.player.vitesseX+=dragValue[0]*20;
+            this.player.vitesseY+=dragValue[1]*20;
         }
         this.player.move(deltaT);
 
@@ -288,8 +341,7 @@ export default class Game {
                     
                     this.inputStates.mouseDown=false;
                     this.stop();
-                    alert("votre score est "+this.score+"!");
-                    this.resetAll();
+                    this.resetAll(this.score);
 
                 }
             }
@@ -313,10 +365,10 @@ export default class Game {
 
 
 
-    resetAll(){
+    resetAll(score){
         this.objetsGraphiques = [];
         this.SpaceJunkList=[];
-        this.init();
+        this.init(score);
         this.start();
     }
 

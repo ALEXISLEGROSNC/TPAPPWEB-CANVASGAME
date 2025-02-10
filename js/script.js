@@ -8,6 +8,7 @@ export default class Init {
             console.error("Erreur : L'élément #container est introuvable !");
             return;
         }
+        container.position="relative";
 
         let existingCanvas = document.getElementById("myCanvas");
         if (existingCanvas) {
@@ -25,14 +26,14 @@ export default class Init {
         container.appendChild(canvas);
 
         let panelsContainer = document.createElement("div");
-        panelsContainer.width = "100%";
-        panelsContainer.height = "100%";
-        panelsContainer.style.padding    = "Opx Opx Opx Opx";
-        panelsContainer.style.margin     = "Opx Opx Opx Opx";
-        panelsContainer.style.top        = "0px";
-        panelsContainer.style.left       = "0px";
+        panelsContainer.style.width = "100%";
+        panelsContainer.style.height = "100%";
+        panelsContainer.style.padding = "0px";
+        panelsContainer.style.margin = "0px";
+        panelsContainer.style.position = "absolute";
+        panelsContainer.style.top = "0px";
+        panelsContainer.style.left = "0px";
         panelsContainer.id = "panelsContainer";
-
         container.appendChild(panelsContainer);
 
         let game = new Game(canvas);
