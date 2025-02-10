@@ -70,7 +70,7 @@ export default class Game {
         this.StartPanel.style.transform = "translate(-50%, -50%)"; // Centrer au milieu de l'écran
         
         //contenu
-        if(!score){
+        if(!score&&score!=0){
             var text = document.createElement("p");
             text.innerText="Cliquez et maintenez pour vous déplacer !";
             text.style.textJustify="center";
@@ -126,17 +126,12 @@ export default class Game {
         );
         this.objetsGraphiques.push(this.objetSouris);
 
-
-        // On ajoute la sortie
-        // TODO
-
-        // On initialise les écouteurs de touches, souris, etc.
         initListeners(this.inputStates, this.canvas);
 
         this.stop();
         this.#displayStartPanel(score);
 
-        console.log("Game initialisé");
+        // console.log("Game initialisé");
     }
 
     drawStar(ctx, x, y, size = 10, opacity = 1) {
@@ -204,7 +199,7 @@ export default class Game {
     
 
     start() {
-        console.log("Game démarré");
+        // console.log("Game démarré");
         this.timer = 0;
         this.lastSpawnTime = performance.now();
         this.lastSpawnTimeStars = performance.now();
@@ -216,7 +211,7 @@ export default class Game {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
             this.running = false;
-            console.log(`Game stoppé après ${this.timer} secondes`);
+            // console.log(`Game stoppé après ${this.timer} secondes`);
         }
     }
     
@@ -257,7 +252,6 @@ export default class Game {
     
 
     update() {
-        console.log(this.running);
         if(!this.running){
             return;
         }
@@ -337,7 +331,7 @@ export default class Game {
             if(obj instanceof Obstacle) {
                 if(rectsOverlap(this.player.x-this.player.w/2, this.player.y - this.player.h/2, this.player.w, this.player.h, obj.x, obj.y, obj.w, obj.h)) {
 
-                    console.log("Collision!");
+                    // console.log("Collision!");
                     
                     this.inputStates.mouseDown=false;
                     this.stop();
