@@ -7,11 +7,17 @@ import ObjetSouris from "./ObjetSouris.js";
 import Script from "./script.js";
 import { rectsOverlap } from "./collisions.js";
 import { initListeners } from "./ecouteurs.js";
+
+import { drawCircleImmediat } from "./utils.js";
 export default class Game {
     objetsGraphiques = [];
     SpaceJunkList=[];
     StarList = [];
     score = 0;
+
+    StartPanel=null;
+    GameOver=null;
+
     constructor(canvas) {
         this.canvas = canvas;
         // etat du clavier
@@ -24,10 +30,31 @@ export default class Game {
         this.running = false;
 
         this.timer = 0;
-        this.spawnInterval = 1000;
+        this.spawnInterval = 1500;
         this.spawnIntervalStars = 300;
         this.lastSpawnTime = 0;
         this.lastSpawnTimeStars = 0;
+        
+        let panelsContainer = document.getElementById("panelsContainer");
+        if (!panelsContainer) {
+            console.error("Erreur : L'élément #container est introuvable !");
+            return;
+        }
+
+        this.StartPanel = document.getElementById("StartPanel");
+        if (this.StartPanel) {
+            this.StartPanel.remove();
+        }
+        this.StartPanel= document.createElement("div");
+        this.StartPanel.id="StartPanel";
+        this.StartPanel.style.backgroundColor = "rgba(20,20,20,0.7)";
+        this.StartPanel.style.borderRadius = "20px";
+        this.StartPanel.style.border = "3px solid gray";
+        this.StartPanel.style.color = "white";
+        this.StartPanel.innerText="aaaa";
+        panelsContainer.appendChild(this.StartPanel);
+
+
 
     }
     getRandomValue(min, max) {
@@ -84,28 +111,28 @@ export default class Game {
     SpawnNewSpaceJunk() {
         const centerX = Config.Canvas.size.x / 2;
         const centerY = Config.Canvas.size.y / 2;
-        const minSpeed = 700;
-        const maxSpeed = 300;
+        const minSpeed = 300;
+        const maxSpeed = 100;
     
         var bord = this.getRandomValue(0, 3); // 0 gauche, 1 haut, 2 droit, 3 bas
         let x, y, speedX, speedY;
     
         switch (bord) {
             case 0: // Gauche
-                x = 0;
+                x = 1;
                 y = this.getRandomValue(0, Config.Canvas.size.y);
                 break;
             case 1: // Haut
                 x = this.getRandomValue(0, Config.Canvas.size.x);
-                y = 0;
+                y = 1;
                 break;
             case 2: // Droite
-                x = Config.Canvas.size.x;
+                x = Config.Canvas.size.x-1;
                 y = this.getRandomValue(0, Config.Canvas.size.y);
                 break;
             case 3: // Bas
                 x = this.getRandomValue(0, Config.Canvas.size.x);
-                y = Config.Canvas.size.y;
+                y = Config.Canvas.size.y-1;
                 break;
         }
     
@@ -117,8 +144,10 @@ export default class Game {
         // Normalisation et application de la vitesse
         speedX = (directionX / length) * this.getRandomValue(minSpeed, maxSpeed);
         speedY = (directionY / length) * this.getRandomValue(minSpeed, maxSpeed);
-    
-        this.SpaceJunkList.push(new SpaceJunk(x, y, 70, 70, speedX, speedY));
+
+        var size = this.getRandomValue(25, 40);
+
+        this.SpaceJunkList.push(new SpaceJunk(x, y, size, size, speedX, speedY));
     }
     
 
@@ -150,14 +179,19 @@ export default class Game {
         this.animationFrameId = requestAnimationFrame(this.mainAnimationLoop.bind(this));
 
         this.ctx.fillStyle = "white";
-        this.ctx.font = "20px Arial";
-        this.ctx.fillText(`Temps: ${(this.timer / 1000).toFixed(1)}s`, 10, 30);
-        this.ctx.fillText(`Score: ${this.score}`, 10, 60);
+        this.ctx.font = "15px Arial";
+        this.ctx.justify = "center";
+        this.ctx.fillText(`Score: ${this.score}`, 15 , 20);
 
     }
 
     drawAllObjects() {
+        //background
+        drawCircleImmediat(this.ctx,Config.Canvas.size.x/2, Config.Canvas.size.y*2 , Config.Canvas.size.y*1.2+6 , "IndianRed");
+        drawCircleImmediat(this.ctx,Config.Canvas.size.x/2, Config.Canvas.size.y*2 , Config.Canvas.size.y*1.2+3 , "LightCoral");
+        drawCircleImmediat(this.ctx,Config.Canvas.size.x/2, Config.Canvas.size.y*2 , Config.Canvas.size.y*1.2 , "DarkSalmon");
         this.StarList.forEach(star => star.draw(this.ctx));
+        //objects
         
         this.SpaceJunkList.forEach(obj => {
             if (!(obj instanceof ObjetSouris)) obj.draw(this.ctx);
@@ -192,7 +226,7 @@ export default class Game {
         if (currentTime - this.lastSpawnTime >= this.spawnInterval) {
             let randomCount = this.getRandomValue(1, 3);
             for (let i = 0; i < randomCount; i++) {
-                this.SpawnNewSpaceJunk();
+                // this.SpawnNewSpaceJunk(); // todo reenable
             }
             this.lastSpawnTime = currentTime;
         }
@@ -228,8 +262,8 @@ export default class Game {
         //controle souris
         var dragValue = this.objetSouris.getDragValue();
         if(dragValue!=null){
-            this.player.vitesseX+=dragValue[0]*50;
-            this.player.vitesseY+=dragValue[1]*50;
+            this.player.vitesseX+=dragValue[0]*30;
+            this.player.vitesseY+=dragValue[1]*30;
         }
         this.player.move(deltaT);
 
@@ -334,7 +368,7 @@ export default class Game {
         speedY = (directionY / length) * this.getRandomValue(minSpeed, maxSpeed);
     
         size = this.getRandomValue(3, 8);
-        opacity = Math.random() * 0.9 + 0.1; // Entre 0.3 et 1
+        opacity = Math.random() * 0.5;
     
         this.StarList.push(new Star(x, y, size, speedX, speedY, opacity));
     }

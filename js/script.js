@@ -3,20 +3,18 @@ import Config from "./Config.js";
 
 export default class Init {
     static init() {
-        let container = document.getElementById("container"); // ✅ Supprimer le #
+        let container = document.getElementById("container");
         if (!container) {
             console.error("Erreur : L'élément #container est introuvable !");
             return;
         }
 
-        // Vérifie si le canvas existe déjà
-        let existingCanvas = document.getElementById("myCanvas"); // ✅ Utiliser document au lieu de container
+        let existingCanvas = document.getElementById("myCanvas");
         if (existingCanvas) {
             existingCanvas.remove();
         }
 
-        // Crée un nouveau canvas
-        let canvas = document.createElement("canvas"); // ✅ Utiliser document.createElement
+        let canvas = document.createElement("canvas");
         canvas.width = Config.Canvas.size.x;
         canvas.height = Config.Canvas.size.y;
         canvas.style.backgroundColor = "black";
@@ -24,12 +22,21 @@ export default class Init {
         canvas.style.border = "3px solid gray";
         canvas.id = "myCanvas";
 
-        // Ajoute le canvas au container
-        container.appendChild(canvas); // ✅ Ajouter au container au lieu de document.body
+        container.appendChild(canvas);
 
-        // Création et démarrage du jeu
+        let panelsContainer = document.createElement("div");
+        panelsContainer.width = "100%";
+        panelsContainer.height = "100%";
+        panelsContainer.style.padding    = "Opx Opx Opx Opx";
+        panelsContainer.style.margin     = "Opx Opx Opx Opx";
+        panelsContainer.style.top        = "0px";
+        panelsContainer.style.left       = "0px";
+        panelsContainer.id = "panelsContainer";
+
+        container.appendChild(panelsContainer);
+
         let game = new Game(canvas);
-        game.init(); // ✅ Suppression de await si init() n'est pas async
+        game.init();
         game.start();
     }
 }

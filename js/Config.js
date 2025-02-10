@@ -1,8 +1,8 @@
 export default class Config {
     static Canvas = class {
         static size = class {
-            static x = 1000;
-            static y = 1000;
+            static x = 500;
+            static y = 500;
         }
     }
     static Cursor = class {

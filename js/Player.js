@@ -25,8 +25,6 @@ export default class Player extends ObjectGraphique {
     }
 
     draw(ctx) {
-
-
         var center = this.#getCenter();
     
         var rotationOffsetX = -25;
@@ -36,16 +34,15 @@ export default class Player extends ObjectGraphique {
     
         ctx.save();
     
-        //dessiner en décalé
+        // Dessiner en décalé
         ctx.translate(rotationPointX, rotationPointY);
-        // Rotation en fonction du vecteur vitesse
-        // if (this.vitesseY != 0 && this.vitesseX != 0) {
-        //     var angle = Math.atan2(this.vitesseY, this.vitesseX) + Math.PI / 2; // Ajouter 90 degrés en radians
-        //     ctx.rotate(angle);
-        // }
-            var angle = Math.atan2(this.vitesseY, this.vitesseX) + Math.PI / 2; // Ajouter 90 degrés en radians
-            ctx.rotate(angle);
-        //dessiner en décalé
+        var angle = Math.atan2(this.vitesseY, this.vitesseX) + Math.PI / 2; // Ajouter 90 degrés en radians
+        ctx.rotate(angle);
+    
+        // Appliquer une mise à l'échelle pour dessiner deux fois plus petit
+        ctx.scale(0.5, 0.5);
+    
+        // Dessiner en décalé
         ctx.translate(-rotationPointX, -rotationPointY);
     
         // Corps
@@ -84,10 +81,10 @@ export default class Player extends ObjectGraphique {
         ctx.fillRect(this.x - 20, this.y + 23, 40, 5); // base haute
     
         ctx.restore();
-        
-
+    
         super.draw(ctx);
     }
+    
 
     move(deltaT=1) {
         this.x += this.vitesseX*deltaT;
