@@ -89,8 +89,8 @@ export default class Player extends ObjectGraphique {
         super.draw(ctx);
     }
 
-    move() {
-        this.x += this.vitesseX;
-        this.y += this.vitesseY;
+    move(deltaT=1) {
+        this.x += this.vitesseX*deltaT;
+        this.y += this.vitesseY*deltaT;
     }
 }

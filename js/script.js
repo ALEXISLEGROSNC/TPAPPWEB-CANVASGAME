@@ -1,32 +1,35 @@
 import Game from "./Game.js";
 import Config from "./Config.js";
 
-
 export default class Init {
-    static async init() {
-        // Vérifiez si un élément avec l'ID 'myCanvas' existe déjà
-        let existingCanvas = document.querySelector("#myCanvas");
+    static init() {
+        let container = document.getElementById("container"); // ✅ Supprimer le #
+        if (!container) {
+            console.error("Erreur : L'élément #container est introuvable !");
+            return;
+        }
+
+        // Vérifie si le canvas existe déjà
+        let existingCanvas = document.getElementById("myCanvas"); // ✅ Utiliser document au lieu de container
         if (existingCanvas) {
             existingCanvas.remove();
         }
 
-        // Créez un nouvel élément <canvas> avec les dimensions spécifiées dans Config
-        let canvas = document.createElement("canvas");
+        // Crée un nouveau canvas
+        let canvas = document.createElement("canvas"); // ✅ Utiliser document.createElement
         canvas.width = Config.Canvas.size.x;
         canvas.height = Config.Canvas.size.y;
-        canvas.style = "background-color: black; border-radius: 20px; border: 3px solid gray";
+        canvas.style.backgroundColor = "black";
+        canvas.style.borderRadius = "20px";
+        canvas.style.border = "3px solid gray";
         canvas.id = "myCanvas";
 
-        // Ajoutez le nouvel élément <canvas> au DOM
-        document.body.appendChild(canvas);
+        // Ajoute le canvas au container
+        container.appendChild(canvas); // ✅ Ajouter au container au lieu de document.body
 
-        // Créez une instance du jeu
+        // Création et démarrage du jeu
         let game = new Game(canvas);
-
-        // Initialisez le jeu
-        await game.init();
-
-        // Démarrez le jeu
+        game.init(); // ✅ Suppression de await si init() n'est pas async
         game.start();
     }
 }

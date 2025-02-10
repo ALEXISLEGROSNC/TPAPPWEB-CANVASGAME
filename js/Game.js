@@ -24,7 +24,7 @@ export default class Game {
         this.running = false;
 
         this.timer = 0;
-        this.spawnInterval = 2000;
+        this.spawnInterval = 1000;
         this.spawnIntervalStars = 300;
         this.lastSpawnTime = 0;
         this.lastSpawnTimeStars = 0;
@@ -46,8 +46,6 @@ export default class Game {
         );
         this.objetsGraphiques.push(this.objetSouris);
 
-
-        this.SpawnNewSpaceJunk()
 
         // On ajoute la sortie
         // TODO
@@ -86,8 +84,8 @@ export default class Game {
     SpawnNewSpaceJunk() {
         const centerX = Config.Canvas.size.x / 2;
         const centerY = Config.Canvas.size.y / 2;
-        const minSpeed = 1.5;
-        const maxSpeed = 4;
+        const minSpeed = 700;
+        const maxSpeed = 300;
     
         var bord = this.getRandomValue(0, 3); // 0 gauche, 1 haut, 2 droit, 3 bas
         let x, y, speedX, speedY;
@@ -174,13 +172,17 @@ export default class Game {
     
 
     update() {
-        let currentTime = performance.now();
-        this.timer += currentTime - (this.lastUpdateTime || currentTime);
+        
+
+        let currentTime = performance.now();  // Temps actuel en millisecondes
+        let deltaT = (currentTime - (this.lastUpdateTime || currentTime)) / 1000; // Converti en secondes
+    
+        this.timer += deltaT;
         this.lastUpdateTime = currentTime;
     
-        this.movePlayer();
-        this.moveSpaceJunk();
-        this.moveStars(); // Ajouté pour les étoiles
+        this.movePlayer(deltaT);
+        this.moveSpaceJunk(deltaT);
+        this.moveStars(deltaT); // Ajouté pour les étoiles
     
         this.objetSouris.x = this.inputStates.mouseX;
         this.objetSouris.y = this.inputStates.mouseY;
@@ -205,7 +207,7 @@ export default class Game {
     
     
 
-    movePlayer() {
+    movePlayer(deltaT) {
 
         //SORTIES
             // cotes
@@ -226,16 +228,16 @@ export default class Game {
         //controle souris
         var dragValue = this.objetSouris.getDragValue();
         if(dragValue!=null){
-            this.player.vitesseX+=dragValue[0]*0.2;
-            this.player.vitesseY+=dragValue[1]*0.2;
+            this.player.vitesseX+=dragValue[0]*50;
+            this.player.vitesseY+=dragValue[1]*50;
         }
-        this.player.move();
+        this.player.move(deltaT);
 
         this.testCollisionsPlayer();
     }
-    moveSpaceJunk(){
+    moveSpaceJunk(deltaT){
         this.SpaceJunkList.forEach(obj => {
-            obj.move();
+            obj.move(deltaT);
         });
     }
 
