@@ -12,8 +12,8 @@ export default class SpaceJunk extends Obstacle {
         ctx.save();
         ctx.fillStyle = "gray";
         ctx.fillRect(this.x, this.y, this.w, this.h);
-        drawCircleImmediat(ctx, this.x+this.w/2, this.y+this.h/2 - 13, 20, "gray"); // tour
-        drawCircleImmediat(ctx, this.x+this.w/2, this.y+this.h/2 - 13, 15, "lightgray");
+        drawCircleImmediat(ctx, this.x+this.w/2, this.y+this.h/2, 55, "gray"); // tour
+        drawCircleImmediat(ctx, this.x+this.w/2, this.y+this.h/2, 50, "lightgray");
         ctx.restore();
     }
     move() {
